@@ -3,13 +3,20 @@
 import { useState } from "react";
 import Card from "../card/page";
 import { menu } from "../data/page";
-import { addDoc, collection, orderBy } from "firebase/firestore";
+import { addDoc, collection} from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
-export default function Kasir() {
-  const [selectedItems, setSelectedItems] = useState<any[]>([]);
+interface MenuItem {
+  id: string;
+  nama: string;
+  imageUrl: string;
+  harga: number;
+}
 
-  const handleSelectItem = (item: any) => {
+export default function Kasir() {
+  const [selectedItems, setSelectedItems] = useState<MenuItem[]>([]);
+
+  const handleSelectItem = (item: MenuItem) => {
     // Menambahkan item ke daftar pesanan
     setSelectedItems((prevItems) => [...prevItems, item]);
   };
@@ -52,7 +59,7 @@ export default function Kasir() {
   };
 
   // Fungsi untuk mengurangi jumlah item yang dipilih
-  const decreaseItemQuantity = (item: any) => {
+  const decreaseItemQuantity = (item: MenuItem) => {
     setSelectedItems((prevItems) => {
       const updatedItems = [...prevItems];
       const index = updatedItems.findIndex((i) => i.id === item.id);
@@ -82,16 +89,6 @@ export default function Kasir() {
                 {getItemQuantity(item.id)} x
               </span>
             </div>
-
-            {/* Tombol untuk mengurangi jumlah item */}
-            {/* <div className="absolute bottom-0 left-0 flex gap-2 p-2">
-              <button
-                className="btn btn-error btn-outline"
-                onClick={() => decreaseItemQuantity(item)} // Mengurangi jumlah item
-              >
-                Hapus
-              </button>
-            </div> */}
           </div>
         ))}
       </div>
