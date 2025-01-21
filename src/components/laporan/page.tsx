@@ -29,6 +29,7 @@ export default function Pesanan() {
         const ordersList = querySnapshot.docs.map((doc) => ({
           ...doc.data(),
           id: doc.id, // Menyimpan ID pesanan untuk referensi
+          items: doc.data().items || [], // Menambahkan properti 'items' jika tidak ada
         }));
 
         // Menambahkan tanggal pemesanan menggunakan waktu perangkat pengguna
@@ -37,7 +38,7 @@ export default function Pesanan() {
           tanggal: new Date(), // Menggunakan tanggal perangkat pengguna
         }));
 
-        setOrders(ordersWithDate);
+        setOrders(ordersWithDate); // Memperbarui state dengan data yang benar
         console.log("Daftar pesanan dengan tanggal: ", ordersWithDate);
       } catch (error) {
         console.error("Error fetching orders: ", error);
@@ -64,8 +65,6 @@ export default function Pesanan() {
       // Menutup modal setelah menghapus
       setIsModalOpen(false);
       setSelectedOrderId(null); // Reset ID yang dipilih
-
-      
     } catch (error) {
       console.error("Error deleting order: ", error);
       alert("Terjadi kesalahan saat menghapus pesanan.");
