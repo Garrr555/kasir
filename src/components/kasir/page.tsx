@@ -54,7 +54,7 @@ export default function Kasir() {
   };
 
   // Fungsi untuk menghitung jumlah item yang dipilih
-  const getItemQuantity = (itemId: string) => {
+  const getItemQuantity = (itemId: number) => {
     return selectedItems.filter((item) => item.id === itemId).length;
   };
 
