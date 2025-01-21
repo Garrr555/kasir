@@ -7,7 +7,7 @@ import { addDoc, collection} from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
 interface MenuItem {
-  id: string;
+  id: number;
   nama: string;
   imageUrl: string;
   harga: number;
