@@ -5,7 +5,6 @@ interface CardProps {
   name: string;
   price: number;
   onSelect: (item: { name: string; image: string; price: number }) => void;
-  onItem: number;
   onDelete: (item: { name: string; image: string; price: number }) => void;
 }
 

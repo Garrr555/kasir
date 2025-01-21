@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Card from "../card/page";
 import { menu } from "../data/page";
-import { addDoc, collection} from "firebase/firestore";
+import { addDoc, collection } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
 interface MenuItem {
@@ -81,7 +81,6 @@ export default function Kasir() {
               price={item.harga}
               onSelect={() => handleSelectItem(item)} // Menambahkan fungsi untuk memilih item
               onDelete={() => decreaseItemQuantity(item)}
-              onItem={getItemQuantity(item.nama)}
             />
             {/* Tampilan jumlah item yang dipilih */}
             <div className="absolute top-0 right-0 bg-white p-2 rounded-full shadow-lg flex items-center justify-center">
