@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 interface CardProps {
   image: string;
   name: string;
@@ -20,7 +22,7 @@ export default function Card(props: CardProps) {
   return (
     <div className="card bg-base-100 w-96 shadow-xl my-3 cursor-pointer">
       <figure>
-        <img src={image} alt="Shoes" />
+        <Image src={"/"} alt="" width={100} height={100} className=""></Image>
       </figure>
       <div className="card-body">
         <h2 className="card-title">{name}</h2>
