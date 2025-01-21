@@ -3,8 +3,22 @@ import { useState, useEffect } from "react";
 import { db } from "../../lib/firebase";
 import { collection, getDocs, doc, deleteDoc } from "firebase/firestore";
 
+// Tipe untuk item yang ada di dalam pesanan
+interface Item {
+  id: string;
+  nama: string;
+  harga: number;
+}
+
+// Tipe untuk pesanan
+interface Order {
+  id: string;
+  items: Item[];
+  tanggal: Date;
+}
+
 export default function Pesanan() {
-  const [orders, setOrders] = useState<any[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null); // Order yang dipilih untuk dihapus
 
@@ -68,7 +82,7 @@ export default function Pesanan() {
               <h3 className="card-title">Pesanan {index + 1}</h3>
               <p className="mt-2">{order.tanggal.toLocaleDateString()}</p>
               <ul>
-                {order.items.map((item: any, idx: number) => (
+                {order.items.map((item, idx) => (
                   <li key={idx} className="py-2">
                     <strong>{item.nama}</strong> - Rp. {item.harga}
                   </li>
