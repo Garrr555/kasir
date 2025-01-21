@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation"; // Import useRouter
 import Card from "../card/page";
 import { menu } from "../data/page";
 import { addDoc, collection } from "firebase/firestore";
@@ -15,56 +16,56 @@ interface MenuItem {
 
 export default function Kasir() {
   const [selectedItems, setSelectedItems] = useState<MenuItem[]>([]);
+  const router = useRouter(); // Inisialisasi useRouter
 
   const handleSelectItem = (item: MenuItem) => {
-    // Menambahkan item ke daftar pesanan
     setSelectedItems((prevItems) => [...prevItems, item]);
   };
 
-  /**
-   * Menyimpan pesanan ke database Firestore
-   * @return {Promise<void>}
-   */
   const saveOrderToDatabase = async () => {
     try {
       const docRef = await addDoc(collection(db, "orders"), {
         items: selectedItems,
         timestamp: new Date().toISOString(),
       });
-      console.log("Pesanan berhasil disimpan dengan ID: ", docRef.id); // Log ID dokumen
+      console.log("Pesanan berhasil disimpan dengan ID: ", docRef.id);
+
       const modal = document.getElementById("my_modal_2") as HTMLDialogElement;
       if (modal) {
         modal.querySelector("h3")!.innerHTML = "Pesanan Berhasil Disimpan!";
         modal.querySelector("p")!.innerHTML =
           "Pesanan Anda telah berhasil disimpan di laporan.";
-        modal.showModal(); // Menampilkan modal
+        modal.showModal();
+
+        // Tutup modal dan navigasikan ke halaman lain
+        modal.addEventListener("close", () => {
+          router.push("/view/laporan"); // Navigasi ke halaman laporan
+        });
       }
-      setSelectedItems([]); // Reset daftar pesanan setelah disimpan
+      setSelectedItems([]);
     } catch (error) {
       console.error("Error saving order: ", error);
-      // Menampilkan modal dengan pesan gagal
+
       const modal = document.getElementById("my_modal_2") as HTMLDialogElement;
       if (modal) {
         modal.querySelector("h3")!.innerHTML = "Terjadi Kesalahan!";
         modal.querySelector("p")!.innerHTML =
           "Terjadi kesalahan saat menyimpan pesanan. Silakan coba lagi.";
-        modal.showModal(); // Menampilkan modal
+        modal.showModal();
       }
     }
   };
 
-  // Fungsi untuk menghitung jumlah item yang dipilih
   const getItemQuantity = (itemId: number) => {
     return selectedItems.filter((item) => item.id === itemId).length;
   };
 
-  // Fungsi untuk mengurangi jumlah item yang dipilih
   const decreaseItemQuantity = (item: MenuItem) => {
     setSelectedItems((prevItems) => {
       const updatedItems = [...prevItems];
       const index = updatedItems.findIndex((i) => i.id === item.id);
       if (index !== -1) {
-        updatedItems.splice(index, 1); // Menghapus satu item dari daftar
+        updatedItems.splice(index, 1);
       }
       return updatedItems;
     });
@@ -79,10 +80,9 @@ export default function Kasir() {
               name={item.nama}
               image={item.imageUrl}
               price={item.harga}
-              onSelect={() => handleSelectItem(item)} // Menambahkan fungsi untuk memilih item
+              onSelect={() => handleSelectItem(item)}
               onDelete={() => decreaseItemQuantity(item)}
             />
-            {/* Tampilan jumlah item yang dipilih */}
             <div className="absolute top-0 right-0 bg-white p-2 rounded-full shadow-lg flex items-center justify-center">
               <span className="text-black font-bold">
                 {getItemQuantity(item.id)} x
@@ -94,7 +94,7 @@ export default function Kasir() {
       <div className="w-full flex justify-center">
         <button
           onClick={saveOrderToDatabase}
-          className="btn btn-accent my-4 text-2xl "
+          className="btn btn-accent my-4 text-2xl"
         >
           Simpan
         </button>

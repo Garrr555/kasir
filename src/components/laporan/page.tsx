@@ -39,7 +39,10 @@ export default function Pesanan() {
           tanggal: new Date(), // Gunakan tanggal perangkat pengguna
         }));
 
+        
+
         setOrders(ordersWithDate);
+        
 
         // Tandai semua pesanan baru
         const newOrderIds = ordersWithDate.map((order) => order.id);
