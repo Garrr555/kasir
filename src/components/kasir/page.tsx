@@ -91,9 +91,14 @@ export default function Kasir() {
           </div>
         ))}
       </div>
-      <button onClick={saveOrderToDatabase} className="btn btn-accent mt-4">
-        Simpan Pesanan
-      </button>
+      <div className="w-full flex justify-center">
+        <button
+          onClick={saveOrderToDatabase}
+          className="btn btn-accent my-4 text-2xl "
+        >
+          Simpan
+        </button>
+      </div>
 
       {/* Modal */}
       <dialog id="my_modal_2" className="modal">

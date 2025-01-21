@@ -21,6 +21,8 @@ export default function Pesanan() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null); // Order yang dipilih untuk dihapus
+  const [recentOrders, setRecentOrders] = useState<Set<string>>(new Set());
+
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -28,18 +30,29 @@ export default function Pesanan() {
         const querySnapshot = await getDocs(collection(db, "orders"));
         const ordersList = querySnapshot.docs.map((doc) => ({
           ...doc.data(),
-          id: doc.id, // Menyimpan ID pesanan untuk referensi
-          items: doc.data().items || [], // Menambahkan properti 'items' jika tidak ada
+          id: doc.id,
+          items: doc.data().items || [],
         }));
 
-        // Menambahkan tanggal pemesanan menggunakan waktu perangkat pengguna
         const ordersWithDate = ordersList.map((order) => ({
           ...order,
-          tanggal: new Date(), // Menggunakan tanggal perangkat pengguna
+          tanggal: new Date(), // Gunakan tanggal perangkat pengguna
         }));
 
-        setOrders(ordersWithDate); // Memperbarui state dengan data yang benar
-        console.log("Daftar pesanan dengan tanggal: ", ordersWithDate);
+        setOrders(ordersWithDate);
+
+        // Tandai semua pesanan baru
+        const newOrderIds = ordersWithDate.map((order) => order.id);
+        setRecentOrders((prev) => new Set([...prev, ...newOrderIds]));
+
+        // Hapus status "NEW" setelah 5 detik
+        setTimeout(() => {
+          setRecentOrders((prev) => {
+            const updated = new Set(prev);
+            newOrderIds.forEach((id) => updated.delete(id));
+            return updated;
+          });
+        }, 10000); // 5 detik
       } catch (error) {
         console.error("Error fetching orders: ", error);
       }
@@ -71,36 +84,73 @@ export default function Pesanan() {
     }
   };
 
+  function totalOrders(orders: Order[]): number {
+    return orders.reduce((total, order) => {
+      const orderTotal = order.items.reduce((sum, item) => sum + item.harga, 0);
+      return total + orderTotal;
+    }, 0);
+  }
+
+  function calculateOrderTotal(order: Order): number {
+    return order.items.reduce((total, item) => total + item.harga, 0);
+  }
+
+
   return (
-    <div className="w-full h-full my-4">
+    <div className="w-full h-full py-10">
       <h2 className="text-2xl font-semibold text-center">Daftar Pesanan</h2>
       <div className="flex flex-wrap gap-3 justify-center mt-4">
         {orders.map((order, index) => (
           <div key={index} className="card w-96 bg-base-100 shadow-xl">
             <div className="card-body">
-              <h3 className="card-title">Pesanan {index + 1}</h3>
-              <p className="mt-2">{order.tanggal.toLocaleDateString()}</p>
-              <ul>
+              <div className="flex justify-between">
+                <h3 className="card-title">
+                  Pesanan {index + 1}{" "}
+                  {recentOrders.has(order.id) && (
+                    <span className="badge badge-success ml-2"></span>
+                  )}
+                </h3>
+
+                <div className="card-actions justify-end">
+                  <button
+                    className="btn btn-error btn-md text-white"
+                    onClick={() => {
+                      setSelectedOrderId(order.id); // Set ID pesanan yang dipilih
+                      setIsModalOpen(true); // Buka modal konfirmasi
+                    }}
+                  >
+                    Hapus
+                  </button>
+                </div>
+              </div>
+
+              <p className="mb-5">{order.tanggal.toLocaleDateString()}</p>
+              <ul className="flex flex-col">
                 {order.items.map((item, idx) => (
-                  <li key={idx} className="py-2">
-                    <strong>{item.nama}</strong> - Rp. {item.harga}
+                  <li key={idx} className="py-2 flex justify-between">
+                    <strong>{item.nama}</strong> + Rp. {item.harga}
                   </li>
                 ))}
               </ul>
-              <div className="card-actions justify-end">
-                <button
-                  className="btn btn-error text-white"
-                  onClick={() => {
-                    setSelectedOrderId(order.id); // Set ID pesanan yang dipilih
-                    setIsModalOpen(true); // Buka modal konfirmasi
-                  }}
-                >
-                  Hapus
-                </button>
+              <div className="overflow-hidden">
+                ____________________________________________________________________________________________
+              </div>
+              <div>
+                <div className="font-bold mt-4 flex justify-between">
+                  <div>Total Harga: </div>
+                  <div className="text-accent">Rp. {calculateOrderTotal(order).toLocaleString()}</div>
+                </div>
               </div>
             </div>
           </div>
         ))}
+      </div>
+      <div>
+        <div className="text-center mt-8">
+          <h3 className="text-xl font-bold">
+            Total Semua Pesanan: Rp. {totalOrders(orders).toLocaleString()}
+          </h3>
+        </div>
       </div>
 
       {/* Overlay Gelap */}

@@ -44,6 +44,13 @@ export const menu = [
   },
   {
     id: 7,
+    nama: "NASI",
+    harga: 3000,
+    imageUrl:
+      "https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp",
+  },
+  {
+    id: 8,
     nama: "ES TEH",
     harga: 3000,
     imageUrl:

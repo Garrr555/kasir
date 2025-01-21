@@ -1,4 +1,3 @@
-import Image from "next/image";
 
 interface CardProps {
   image: string;
@@ -20,12 +19,11 @@ export default function Card(props: CardProps) {
   }
   return (
     <div className="card bg-base-100 w-96 shadow-xl my-3 cursor-pointer">
-      <figure>
+      {/* <figure>
         <Image src={"/"} alt="" width={100} height={100} className=""></Image>
-      </figure>
+      </figure> */}
       <div className="card-body">
-        <h2 className="card-title">{name}</h2>
-        <p>If a dog chews shoes whose shoes does he choose?</p>
+        <h2 className="card-title text-2xl my-2">{name}</h2>
         <div className="card-actions justify-between">
           <button
             className="btn btn-error btn-outline"
