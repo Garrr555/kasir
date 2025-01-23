@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation"; // Import useRouter
 import Card from "../card/page";
-import { menu } from "../data/page";
+import {menu} from "@/data/page"
 import { addDoc, collection } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
